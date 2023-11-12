@@ -1,0 +1,111 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace MyQueue
+{
+    public class Node<T>
+    {
+        public T Data { get; set; }
+        public Node<T> Next { get; set; }
+
+        public Node(T data)
+        {
+            Data = data;
+        }
+    }
+    public class Queue<T>
+    {
+        Node<T> head;
+        Node<T> tail;
+        int count;
+
+        public Queue()
+        {
+            count = 0;
+        }
+
+        public bool IsEmpty()
+        {
+            return count == 0;
+        }
+
+        public void Push(T data)
+        {
+            Node<T> newNode = new Node<T>(data);
+            Node<T> tempNode = tail;
+            tail = newNode;
+            if (count == 0) head = tail;
+            else tempNode.Next = tail;
+            count++;
+        }
+
+        public T Pop()
+        {
+            if (IsEmpty()) throw new InvalidOperationException();
+            T outputData = head.Data;
+            head = head.Next;
+            count--;
+            return outputData;
+        }
+
+        public T Front()
+        {
+            if (IsEmpty()) throw new InvalidOperationException();
+            return head.Data;
+        }
+
+        public int Size()
+        {
+            return count;
+        }
+
+        public void Clear()
+        {
+            while (!IsEmpty()) Pop();
+        }
+
+        public void Exit()
+        {
+            Clear();
+            Environment.Exit(0);
+        }
+    }
+
+    public class Program
+    {
+        static void Main()
+        {
+            Queue<int> Queue = new Queue<int>();
+            while (true)
+            {
+                string[] command = Console.ReadLine().Split(' ');
+                switch (command[0])
+                {
+                    case "push":
+                        int data = int.Parse(command[1]);
+                        Queue.Push(data);
+                        Console.WriteLine("Ok");
+                        break;
+                    case "pop":
+                        Console.WriteLine(Queue.Pop());
+                        break;
+                    case "front":
+                        Console.WriteLine(Queue.Front());
+                        break;
+                    case "size":
+                        Console.WriteLine(Queue.Size());
+                        break;
+                    case "clear":
+                        Queue.Clear();
+                        Console.WriteLine("Ok");
+                        break;
+                    case "exit":
+                        Console.WriteLine("Bye-bye");
+                        Queue.Exit();
+                        break;
+                }
+            }
+        }
+    }
+}
