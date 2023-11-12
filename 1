@@ -1,0 +1,97 @@
+using System;
+using System.ComponentModel;
+
+namespace MyStack
+{
+    public class Node<T>
+    {
+        public T Data { get; set; }
+        public Node<T> Next { get; set; }
+        public Node(T data)
+        {
+            Data = data;
+        }
+    }
+    public class MyStack<T>
+    {
+        private Node<T> top;
+        private int count;
+        public MyStack()
+        {
+            count = 0;
+        }
+        public bool IsEmpty()
+        {
+            return count == 0;
+        }
+        public int Size()
+        {
+            return count;
+        }
+        public void Push(T data)
+        {
+            Node<T> newNode = new Node<T>(data);
+            newNode.Next = top;
+            top = newNode;
+            count++;
+        }
+        public T Back()
+        {
+            if (IsEmpty()) throw new InvalidOperationException();
+            return top.Data;
+        }
+        public T Pop()
+        {
+            if (IsEmpty()) throw new InvalidOperationException();
+            Node<T> temp = top;
+            top = top.Next;
+            count--;
+            return temp.Data;
+        }
+        public void Clear()
+        {
+            while (!IsEmpty()) Pop();
+        }
+        public void Exit()
+        {
+            Clear();
+            Environment.Exit(0);
+        }
+    }
+    public class Program
+    {
+        static void Main()
+        {
+            MyStack<int> myStack = new MyStack<int>();
+            while (true)
+            {
+                string[] command = Console.ReadLine().Split(' ');
+                switch (command[0])
+                {
+                    case "push":
+                        int data = int.Parse(command[1]);
+                        myStack.Push(data);
+                        Console.WriteLine("ok");
+                        break;
+                    case "pop":
+                        Console.WriteLine(myStack.Pop());
+                        break;
+                    case "back":
+                        Console.WriteLine(myStack.Back());
+                        break;
+                    case "size":
+                        Console.WriteLine(myStack.Size());
+                        break;
+                    case "clear":
+                        myStack.Clear();
+                        Console.WriteLine("ok");
+                        break;
+                    case "exit":
+                        Console.WriteLine("bye");
+                        myStack.Exit();
+                        break;
+                }
+            }
+        }
+    }
+}
