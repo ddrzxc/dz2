@@ -1,0 +1,178 @@
+using System;
+using System.Xml.Linq;
+
+namespace MyDeque
+{
+    public class DoublyNode<T>
+    {
+        public T Data { get; set; }
+        public DoublyNode<T> Previous { get; set; }
+        public DoublyNode<T> Next { get; set; }
+
+        public DoublyNode(T data)
+        {
+            Data = data;
+        }
+    }
+
+    public class Deque<T>
+    {
+        DoublyNode<T> head;
+        DoublyNode<T> tail;
+        int count;
+
+        public void AddLast(T data)
+        {
+            DoublyNode<T> newNode = new DoublyNode<T>(data);
+
+            if (count == 0)
+                head = newNode;
+            else
+            {
+                tail.Next = newNode;
+                newNode.Previous = tail;
+            }
+            tail = newNode;
+            count++;
+        }
+
+        public void AddFirst(T data)
+        {
+            DoublyNode<T> newNode = new DoublyNode<T>(data);
+            DoublyNode<T> temp = head;
+            newNode.Next = temp;
+            head = newNode;
+            if (count == 0)
+                tail = head;
+            else
+                temp.Previous = newNode;
+            count++;
+        }
+        public T RemoveFirst()
+        {
+            if (count == 0) throw new InvalidOperationException();
+            T outputData = head.Data;
+            if (count == 1)
+            {
+                head = tail = null;
+            }
+            else
+            {
+                head = head.Next;
+                head.Previous = null;
+            }
+            count--;
+            return outputData;
+        }
+        public T RemoveLast()
+        {
+            if (count == 0) throw new InvalidOperationException();
+            T outputData = tail.Data;
+            if (count == 1)
+            {
+                head = tail = null;
+            }
+            else
+            {
+                tail = tail.Previous;
+                tail.Next = null;
+            }
+            count--;
+            return outputData;
+        }
+
+        public int FindElement(T data)
+        {
+            DoublyNode<T> current = head;
+            int index = 0;
+            while (current != null)
+            {
+                if (current.Data.Equals(data)) return index;
+                current = current.Next;
+                index++;
+            }
+            throw new InvalidOperationException();
+        }
+
+        public T RemoveByData(T data)
+        {
+            DoublyNode<T> current = head;
+            while (current != null)
+            {
+                if (current.Data.Equals(data))
+                {
+                    if (current.Next == null) return RemoveLast();
+                    if (current == head) return RemoveFirst();
+                    (current.Previous.Next, current.Next.Previous) = (current.Next, current.Previous);
+                    count--;
+                    return current.Data;
+                }
+                current = current.Next;
+            }
+            throw new InvalidOperationException();
+        }
+
+        public string PrintMyDeque()
+        {
+            T[] res = new T[count];
+            int k = 0;
+            DoublyNode<T>? node = head;
+            while (node != null)
+            {
+                res[k++] = node.Data;
+                node = node.Next;
+            }
+            return String.Join(' ', res);
+        }
+    }
+
+    class Program
+    {
+        static void Main()
+        {
+            Deque<int> Deque = new Deque<int>();
+            while (true)
+            {
+                string[] command = Console.ReadLine().Split(' ');
+                switch (command[0])
+                {
+                    case "AddFirst":
+                        Deque.AddFirst(int.Parse(command[1]));
+                        break;
+                    case "AddLast":
+                        Deque.AddLast(int.Parse(command[1]));
+                        break;
+                    case "RemoveFirst":
+                        Deque.RemoveFirst();
+                        break;
+                    case "RemoveLast":
+                        Deque.RemoveLast();
+                        break;
+                    case "RemoveByData":
+                        try
+                        {
+                            Deque.RemoveByData(int.Parse(command[1]));
+                        }
+                        catch (InvalidOperationException e)
+                        {
+                            Console.WriteLine("Указанный элемент не содержится в очереди");
+                        }
+                        break;
+                    case "FindElement":
+                        try
+                        {
+                            Console.WriteLine("Указанный элемент имеет индекс {0}", Deque.FindElement(int.Parse(command[1])));
+                        }
+                        catch (InvalidOperationException e)
+                        {
+                            Console.WriteLine("Указанный элемент не содержится в очереди");
+                        }
+                        break;
+                    case "PrintMyDeque":
+                        Deque.PrintMyDeque();
+                        break;
+                }
+            }
+        }
+    }
+}
