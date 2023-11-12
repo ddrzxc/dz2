@@ -1,0 +1,111 @@
+using System;
+using System.Linq.Expressions;
+
+namespace CheckBrackets
+{
+    public class Node<T>
+    {
+        public T Data { get; set; }
+        public Node<T> Next { get; set; }
+
+        public Node(T data)
+        {
+            Data = data;
+        }
+    }
+
+    public class Stack<T>
+    {
+        private Node<T> top;
+        private int count;
+
+        public Stack()
+        {
+            top = null;
+            count = 0;
+        }
+
+        public bool IsEmpty()
+        {
+            return count == 0;
+        }
+
+        public int Size()
+        {
+            return count;
+        }
+
+        public void Push(T data)
+        {
+            Node<T> newNode = new Node<T>(data);
+            newNode.Next = top;
+            top = newNode;
+            count++;
+        }
+
+        public T Back()
+        {
+            if (IsEmpty()) throw new InvalidOperationException();
+            return top.Data;
+        }
+
+        public T Pop()
+        {
+            if (IsEmpty()) throw new InvalidOperationException();
+            Node<T> temp = top;
+            top = top.Next;
+            count--;
+            return temp.Data;
+        }
+
+        public void Clear()
+        {
+            while (!IsEmpty()) Pop();
+        }
+
+        public void Exit()
+        {
+            Clear();
+            Environment.Exit(0);
+        }
+    }
+
+    public class Program
+    {
+        public static bool CheckBrackets(string exp)
+        {
+            Stack<char> Stack = new Stack<char>();
+            int numClosingBrackets = 0;
+            foreach (char value in exp.ToCharArray())
+            {
+                if (value == '(') { Stack.Push(value); }
+                else if (value == ')')
+                {
+                    numClosingBrackets++;
+                    try
+                    {
+                        Stack.Pop();
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        Console.WriteLine("Лишняя {0}-ая(ья) закрывающая скобка", numClosingBrackets);
+                        return false;
+                    }
+                }
+            }
+            if (!Stack.IsEmpty())
+            {
+                Console.WriteLine("В выражении {0} лишних(-яя) открывающих(-ая) скобок", Stack.Size());
+                return false;
+            }
+            Console.WriteLine("Скобки расставлены верно!");
+            return true;
+        }
+
+        static void Main()
+        {
+            string expression = Console.ReadLine();
+            CheckBrackets(expression);
+        }
+    }
+}
